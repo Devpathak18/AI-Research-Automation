@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pathaks lab // telemetry generator</title>
+  <meta name="description" content="Type any topic and receive a complete 7-step learning guide instantly. Powered by AI." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --canvas:     #030303;
+      --surface:    #0a0a0c;
+      --surface-accent: #121318;
+      --ink:        #f4f4f6;
+      --ink-light:  #8e919a;
+      --rule:       #1f212a;
+      --rule-focus: #3f4456;
+      --action:     linear-gradient(135deg, #005288 0%, #0072b7 100%);
+      --action-hover: linear-gradient(135deg, #0062a3 0%, #008be0 100%);
+      --action-disabled: #222530;
+      --glow:       0 0 20px rgba(0, 82, 136, 0.3);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(0, 82, 136, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0, 114, 183, 0.1) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .shell {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+
+    header {
+      margin-bottom: 48px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .wordmark {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #a3a8b4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--ink-light);
+      font-weight: 400;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    #topic-input {
+      flex: 1;
+      padding: 13px 16px;
+      font-family: var(--font);
+      font-size: 15px;
+      color: var(--ink);
+      background: rgba(3, 3, 3, 0.6);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.15s ease;
+      line-height: 1.5;
+    }
+
+    #topic-input::placeholder { color: #4e5264; }
+    #topic-input:focus { 
+      border-color: #0072b7; 
+      box-shadow: 0 0 12px rgba(0, 114, 183, 0.25);
+    }
+
+    #generate-btn {
+      padding: 13px 22px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      background: var(--action);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      box-shadow: var(--glow);
+    }
+
+    #generate-btn:hover:not(:disabled) { 
+      background: var(--action-hover); 
+      box-shadow: 0 0 25px rgba(0, 114, 183, 0.5);
+    }
+    #generate-btn:disabled { 
+      background: var(--action-disabled); 
+      color: #4e5264;
+      cursor: not-allowed; 
+      box-shadow: none;
+    }
+
+    .status-line {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #0072b7;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .error-msg {
+      font-size: 13px;
+      color: #ff4a4a;
+      margin-top: 12px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    .divider {
+      margin: 36px 0;
+      border: none;
+      border-top: 1px solid var(--rule);
+      display: none;
+    }
+    .divider.visible { display: block; }
+
+    #output-zone {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+    #output-zone.visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .output-meta {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+
+    .output-timestamp {
+      font-size: 11px;
+      color: var(--ink-light);
+      margin-top: 2px;
+    }
+
+    #clear-btn {
+      font-size: 11px;
+      color: var(--ink-light);
+      background: none;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: var(--font);
+      letter-spacing: 0.04em;
+      transition: border-color 0.15s;
+    }
+    #clear-btn:hover { border-color: var(--rule-focus); color: #ffffff; }
+
+    .cached-notice {
+      font-size: 12px;
+      color: #005288;
+      margin-bottom: 16px;
+    }
+
+    #guide-content {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #d1d4dc;
+    }
+
+    #guide-content h1, #guide-content h2, #guide-content h3 {
+      font-weight: 600;
+      margin-top: 32px;
+      margin-bottom: 10px;
+      line-height: 1.35;
+      color: #ffffff;
+    }
+    #guide-content h1 { font-size: 18px; border-bottom: 1px solid var(--surface-accent); padding-bottom: 4px; }
+    #guide-content h2 { font-size: 16px; }
+    #guide-content h3 { font-size: 15px; }
+    #guide-content h1:first-child,
+    #guide-content h2:first-child,
+    #guide-content h3:first-child { margin-top: 0; }
+
+    #guide-content p { margin-bottom: 14px; }
+    #guide-content ul, #guide-content ol { padding-left: 22px; margin-bottom: 14px; }
+    #guide-content li { margin-bottom: 6px; }
+    #guide-content strong { font-weight: 600; color: #ffffff; }
+
+    #guide-content blockquote {
+      border-left: 3px solid #005288;
+      padding: 2px 0 2px 16px;
+      margin: 18px 0;
+      color: var(--ink-light);
+      background: var(--surface-accent);
+    }
+
+    #guide-content code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 13px;
+      background: #121318;
+      color: #e0a370;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    #guide-content hr {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 24px 0;
+    }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule);
+      font-size: 11px;
+      color: #4e5264;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 480px) {
+      .input-row { flex-direction: column; }
+      #generate-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <header>
+    <div class="wordmark">pathaks lab</div>
+    <div class="tagline">Type any topic. Receive a complete 7-step learning guide.</div>
+  </header>
+
+  <section>
+    <label class="input-label" for="topic-input">Topic</label>
+    <div class="input-row">
+      <input
+        id="topic-input"
+        type="text"
+        placeholder="e.g. Quantum Computing, Indian History, Guitar..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button id="generate-btn">Generate</button>
+    </div>
+    <div class="status-line" id="status-line"></div>
+    <div class="error-msg" id="error-msg"></div>
+  </section>
+
+  <hr class="divider" id="divider" />
+
+  <section id="output-zone">
+    <div class="output-header">
+      <div>
+        <div class="output-meta" id="output-meta"></div>
+        <div class="output-timestamp" id="output-timestamp"></div>
+      </div>
+      <button id="clear-btn">Clear</button>
+    </div>
+    <div class="cached-notice" id="cached-notice"></div>
+    <div id="guide-content"></div>
+  </section>
+
+  <footer>pathaks.co.in</footer>
+
+</div>
+
+<script>
+  const WEBHOOK_URL = 'https://hook.eu1.make.com/qed41g7lm8tau448igu57b8x4owji1ba';
+  const STORAGE_KEY = 'pathaks_last_guide';
+
+  const input     = document.getElementById('topic-input');
+  const btn       = document.getElementById('generate-btn');
+  const status    = document.getElementById('status-line');
+  const errMsg    = document.getElementById('error-msg');
+  const divider   = document.getElementById('divider');
+  const outZone   = document.getElementById('output-zone');
+  const outMeta   = document.getElementById('output-meta');
+  const outTime   = document.getElementById('output-timestamp');
+  const cachedMsg = document.getElementById('cached-notice');
+  const guide     = document.getElementById('guide-content');
+  const clearBtn  = document.getElementById('clear-btn');
+
+  // Load saved guide on page open
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const { topic, html, timestamp } = JSON.parse(saved);
+        showGuide(topic, html, timestamp, true);
+      } catch(e) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
+    outZone.classList.remove('visible');
+    divider.classList.remove('visible');
+    guide.innerHTML = '';
+    input.value = '';
+    input.focus();
+  });
+
+  function setLoading(on) {
+    btn.disabled = on;
+    btn.textContent = on ? 'Generating…' : 'Generate';
+    status.innerHTML = on ? '<span style="display:inline-block; width:6px; height:6px; background:#0072b7; border-radius:50%; animation: pulse 1s infinite alternate;"></span> Crafting your guide — this takes about 20 seconds.' : '';
+    errMsg.classList.remove('visible');
+  }
+
+  // Inject animation keyframes for loader
+  const style = document.createElement('style');
+  style.innerHTML = '@keyframes pulse { from { opacity: 0.3; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }';
+  document.head.appendChild(style);
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errMsg.classList.add('visible');
+    status.textContent = '';
+  }
+
+  function formatTime(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) +
+           ' · ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function showGuide(topic, html, timestamp, fromCache) {
+    outMeta.textContent = `Learning Guide · ${topic}`;
+    outTime.textContent = formatTime(timestamp);
+    cachedMsg.textContent = fromCache ? 'Restored from your last session.' : '';
+    guide.innerHTML = html;
+    divider.classList.add('visible');
+    outZone.classList.add('visible');
+    if (!fromCache) outZone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderMarkdown(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+      .replace(/^---$/gm, '<hr>')
+      .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+      .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
+      .replace(/`(.+?)`/g, '<code>$1</code>')
+      .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')
+      .replace(/<\/ul>\s*<ul>/g, '')
+      .split('\n\n')
+      .map(p => p.match(/^<[hul]|^<hr|^<block/) ? p : `<p>${p}</p>`)
+      .join('\n')
+      .replace(/<p><\/p>/g, '')
+      .replace(/<p>(<[hul])/g, '$1')
+      .replace(/(<\/[hul][^>]*>)<\/p>/g, '$1');
+  }
+
+  async function generate() {
+    const topic = input.value.trim();
+    if (!topic) { input.focus(); return; }
+
+    setLoading(true);
+    outZone.classList.remove('visible');
+    divider.classList.remove('visible');
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic })
+      });
+
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+      const text = await res.text();
+      if (!text || text.trim() === 'Accepted') {
+        throw new Error('Guide is still processing — wait a moment and try again.');
+      }
+
+      const html = renderMarkdown(text);
+      const timestamp = Date.now();
+
+      // Save to localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ topic, html, timestamp }));
+
+      showGuide(topic, html, timestamp, false);
+
+    } catch (err) {
+      showError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  btn.addEventListener('click', generate);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') generate(); });
+</script>
+</body>
+</html>
