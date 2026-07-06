@@ -59,7 +59,7 @@ Every one of the 8 calls runs against Ollama on your own
 machine — zero per-token cost, no API key management, 
 no rate limits from a provider.
 
-ngrok exposes localhost:11434 to Make.com's cloud, 
+ngrok exposes localhost:YOUR_MAKE_WEBHOOK_URL to Make.com's cloud, 
 making the local model reachable from any workflow.
 
 ---
@@ -111,7 +111,7 @@ Run setup.bat — opens Ollama and ngrok in separate windows
 
 **Step 3 — Get ngrok URL**
 Copy the HTTPS forwarding URL from the ngrok window
-(format: https://xxxx.ngrok-free.dev)
+(format: YOUR_MAKE_NGROK_URL)
 
 **Step 4 — Import Make.com blueprint**
 New scenario → menu → Import Blueprint → select 
@@ -189,7 +189,7 @@ Program co-designed with Tata Consultancy Services
 
 GitHub: github.com/Devpathak18
 LinkedIn: linkedin.com/in/devpathak18
-Email: devpathak2244@gmail.com
+Email: devpathakpersonal@gmail.com
 Portfolio: pathaks.co.in
 
 Open to remote internships in AI Automation, 
