@@ -64,7 +64,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -389,7 +389,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -714,7 +714,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -1039,7 +1039,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -1364,7 +1364,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -1689,7 +1689,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -2014,7 +2014,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -2339,7 +2339,7 @@
                                 "authenticationType": "noAuth"
                             },
                             "mapper": {
-                                "url": "https://manly-penniless-steadier.ngrok-free.dev/api/chat",
+                                "url": "YOUR_VALUE_HERE",
                                 "method": "post",
                                 "headers": [
                                     {
@@ -2761,7 +2761,7 @@
                                                 "scoped": "true",
                                                 "connection": "google"
                                             },
-                                            "label": "My Google connection (devpathakvlogs1817@gmail.com)"
+                                            "label": "My Google connection (YOUR_EMAIL_HERE)"
                                         }
                                     }
                                 },
@@ -2872,7 +2872,7 @@
                 ]
             ]
         },
-        "zone": "eu1.make.com",
+        "zone": "YOUR_VALUE_HERE",
         "notes": []
     }
 }
